@@ -41,11 +41,16 @@ def main():
     # Тут нужно создать экземпляры классов.
     ...
 
-    # while True:
-        # clock.tick(SPEED)
+    while True:
+        clock.tick(SPEED)
 
         # Тут опишите основную логику игры.
-        # ...
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+
+        pygame.display.update()
 
 
 if __name__ == '__main__':
