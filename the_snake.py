@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, choice
 
 import pygame
 
@@ -33,29 +33,6 @@ pygame.display.set_caption('Змейка')
 clock = pygame.time.Clock()
 
 
-def game_over_screen():
-    """
-    Отображение экрана окончания игры
-    базу нагуглил, доделывал самостоятельно
-    """
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            # Если пользователь нажимает клавишу 'r', игра начинается заново.
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_r:
-                    main()
-        # Отображение надписи Game Over и Restart.
-        font = pygame.font.SysFont(None, 50)
-        text_game_over = font.render('Game Over', True, (123, 221, 43))
-        text_restart = font.render('Press "r" for new game',
-                                   True, (255, 255, 255))
-        screen.blit(text_game_over, (SCREEN_WIDTH // 2.8, SCREEN_HEIGHT // 4))
-        screen.blit(text_restart, (SCREEN_WIDTH // 4.5, SCREEN_HEIGHT // 2))
-        pygame.display.flip()
-
-
 class GameObject:
     """Базовый класс для всех объектов игры."""
 
@@ -64,7 +41,7 @@ class GameObject:
         self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.body_color = body_color
 
-    def draw(self):
+    def draw(self, surface):
         """Отрисовывает объект на экране."""
         pass
 
@@ -128,14 +105,6 @@ class Snake(GameObject):
         new_head_position = ((x + dx * GRID_SIZE) % SCREEN_WIDTH,
                              (y + dy * GRID_SIZE) % SCREEN_HEIGHT)
 
-        """Можно было написать так, но так труднее читать, на мой взгляд"""
-        # new_head_position = (
-        #     (self.get_head_position()[0] +
-        #         self.direction[0] * GRID_SIZE) % SCREEN_WIDTH,
-        #     (self.get_head_position()[1] +
-        #         self.direction[1] * GRID_SIZE) % SCREEN_HEIGHT
-        # )
-
         if len(self.positions) > self.length:  # Если змейка не ест яблоко.
             self.positions.pop()  # Удаление хвоста.
         # Добавление новой головы в начало змейки.
@@ -172,8 +141,9 @@ class Snake(GameObject):
         """Сбрасывает состояние змейки в начальное положение."""
         self.length = 1
         self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
-        self.direction = RIGHT
-        self.next_direction = None
+        # Случайное направление движения при сбросе игры
+        self.direction = choice([UP, DOWN, LEFT, RIGHT])
+        screen.fill(BOARD_BACKGROUND_COLOR)
 
 
 def handle_keys(game_object):
@@ -200,45 +170,32 @@ def main():
     которые встречаются на ее пути.
     Каждый раз, когда змейка ест яблоко, её длина увеличивается.
     При столкновении змейки с самой собой игра перезапускается.
-    Для выхода из игры пользователь может нажать на крестик окна игры,
-    или перезапустить игру клавишей 'r'.
+    Для выхода из игры пользователь может нажать на крестик окна игры.
     """
     snake = Snake()
     apple = Apple()
     game_status = True
     while game_status:
         clock.tick(SPEED)
-
-        # Проверяем состояние клавиш, нет ли нажатых.
-        """Тоже гуглил, без этого управления не включалось."""
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] and snake.direction != DOWN:
-            snake.next_direction = UP
-        elif keys[pygame.K_DOWN] and snake.direction != UP:
-            snake.next_direction = DOWN
-        elif keys[pygame.K_LEFT] and snake.direction != RIGHT:
-            snake.next_direction = LEFT
-        elif keys[pygame.K_RIGHT] and snake.direction != LEFT:
-            snake.next_direction = RIGHT
+        handle_keys(snake)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-        snake.move()
         snake.update_direction()
-        # Вынес из функции snake.move().
-        # Столкновение змейки с собой и завершение игры.
-        if snake.get_head_position() in snake.positions[1:]:
-            game_over_screen()
-            snake.reset()
-            apple.randomize_position()
-        pygame.display.flip()
+        snake.move()
 
         if snake.get_head_position() == apple.position:
             apple.move_to_new_position(snake.positions)
             snake.length += 1
-        screen.fill((0, 0, 0))
+
+        # Столкновение змейки с собой и завершение игры.
+        if snake.get_head_position() in snake.positions[1:]:
+            snake.reset()
+            apple.randomize_position()
+
+        screen.fill(BOARD_BACKGROUND_COLOR)
         snake.draw(screen)
         apple.draw(screen)
         pygame.display.update()
