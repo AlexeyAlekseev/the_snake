@@ -47,9 +47,9 @@ def game_over_screen():
         # вы можете изменить шрифт, размер, цвет и т.д.
         font = pygame.font.SysFont(None, 50)
         text_game_over = font.render('Game Over', True, (123, 221, 43))
-        text_res = font.render('Press "r" for new game', True, (255, 255, 255))
+        text_restart = font.render('Press "r" for new game', True, (255, 255, 255))
         screen.blit(text_game_over, (SCREEN_WIDTH // 2.8, SCREEN_HEIGHT // 4))
-        screen.blit(text_res, (SCREEN_WIDTH // 4.5, SCREEN_HEIGHT // 2))
+        screen.blit(text_restart, (SCREEN_WIDTH // 4.5, SCREEN_HEIGHT // 2))
         pygame.display.flip()
 
 
