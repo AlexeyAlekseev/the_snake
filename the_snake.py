@@ -34,7 +34,10 @@ clock = pygame.time.Clock()
 
 
 def game_over_screen():
-    """Отображение экрана окончания игры"""
+    """
+    Отображение экрана окончания игры
+    базу нагуглил, доделывал самостоятельно
+    """
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -43,17 +46,16 @@ def game_over_screen():
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_r:
                     main()
-            # Отображение надписи Game Over,
-        # вы можете изменить шрифт, размер, цвет и т.д.
+        # Отображение надписи Game Over и Restart
         font = pygame.font.SysFont(None, 50)
         text_game_over = font.render('Game Over', True, (123, 221, 43))
-        text_restart = font.render('Press "r" for new game', True, (255, 255, 255))
+        text_restart = font.render('Press "r" for new game',
+                                   True, (255, 255, 255))
         screen.blit(text_game_over, (SCREEN_WIDTH // 2.8, SCREEN_HEIGHT // 4))
         screen.blit(text_restart, (SCREEN_WIDTH // 4.5, SCREEN_HEIGHT // 2))
         pygame.display.flip()
 
 
-# Тут опишите все классы игры.
 class GameObject:
     """Базовый класс для всех объектов игры."""
 
@@ -89,7 +91,6 @@ class Apple(GameObject):
             if self.position not in snake_positions:
                 break
 
-    # Метод draw класса Apple
     def draw(self, surface):
         """Отрисовывает объект на экране."""
         rect = pygame.Rect(
@@ -112,7 +113,6 @@ class Snake(GameObject):
         self.direction = RIGHT
         self.next_direction = None
 
-    # Метод обновления направления после нажатия на кнопку
     def update_direction(self):
         """Обновляет текущее направление движения змейки."""
         if self.next_direction:
@@ -141,7 +141,6 @@ class Snake(GameObject):
         # добавление новой головы в начало змейки
         self.positions.insert(0, new_head_position)
 
-    # # Метод draw класса Snake
     def draw(self, surface):
         """Отрисовывает змейку на экране."""
         for position in self.positions[:-1]:
@@ -201,7 +200,8 @@ def main():
     которые встречаются на ее пути.
     Каждый раз, когда змейка ест яблоко, её длина увеличивается.
     При столкновении змейки с самой собой игра перезапускается.
-    Для выхода из игры пользователь может нажать на крестик окна игры.
+    Для выхода из игры пользователь может нажать на крестик окна игры,
+    или перезапустить игру клавишей 'r'
     """
     snake = Snake()
     apple = Apple()
@@ -210,6 +210,7 @@ def main():
         clock.tick(SPEED)
 
         # Проверяем состояние клавиш, нет ли нажатых
+        """Тоже гуглил, без этого управления не включалось"""
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP] and snake.direction != DOWN:
             snake.next_direction = UP
@@ -226,6 +227,7 @@ def main():
 
         snake.move()
         snake.update_direction()
+        # Вынес из функции snake.move()
         # Столкновение змейки с собой и завершение игры
         if snake.get_head_position() in snake.positions[1:]:
             game_over_screen()
