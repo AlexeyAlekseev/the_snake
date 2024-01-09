@@ -1,3 +1,4 @@
+import sys
 from random import randint, choice
 
 import pygame
@@ -146,6 +147,7 @@ def handle_keys(game_object):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
+            sys.exit()
         elif event.type == pygame.KEYDOWN:
             for key in TURNS:
                 if event.key == key[0] and game_object.direction != key[1]:
@@ -173,6 +175,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
 
         snake.update_direction()
         snake.move()
