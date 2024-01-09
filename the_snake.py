@@ -64,10 +64,14 @@ class Apple(GameObject):
     @staticmethod
     def randomize_position():
         """Задает случайное положение яблоку."""
-        return (
-            randint(0, GRID_WIDTH - 2) * GRID_SIZE,
-            randint(0, GRID_HEIGHT - 2) * GRID_SIZE
-        )
+        while True:
+            _position = (
+                randint(0, GRID_WIDTH - 2) * GRID_SIZE,
+                randint(0, GRID_HEIGHT - 2) * GRID_SIZE
+            )
+            if not _position == SCREEN_CENTER:
+                break
+        return _position
 
     def move_to_new_position(self, snake_positions):
         """Отправляет яблоко в новую позицию, которая не внутри змейки."""
