@@ -81,7 +81,7 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Класс для змейки."""
 
-    def __init__(self, body_color=(0, 255, 0)):
+    def __init__(self, body_color=GREEN_COLOR):
         """Инициализирует змейку."""
         super().__init__(body_color)
         self.length = 1
