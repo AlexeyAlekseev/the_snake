@@ -37,6 +37,14 @@ pygame.display.set_caption('Змейка')
 # Настройка времени:
 clock = pygame.time.Clock()
 
+# Словарь клавиш управления
+TURNS = {
+    (pygame.K_UP, DOWN): UP,
+    (pygame.K_DOWN, UP): DOWN,
+    (pygame.K_LEFT, RIGHT): LEFT,
+    (pygame.K_RIGHT, LEFT): RIGHT,
+}
+
 
 class GameObject:
     """Базовый класс для всех объектов игры."""
@@ -134,19 +142,15 @@ class Snake(GameObject):
 
 
 def handle_keys(game_object):
-    """Обрабатывает нажатия клавиш и изменяет направление змейки."""
+    """Функция отвечающая за нажатие клавиш"""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and game_object.direction != DOWN:
-                game_object.next_direction = UP
-            elif event.key == pygame.K_DOWN and game_object.direction != UP:
-                game_object.next_direction = DOWN
-            elif event.key == pygame.K_LEFT and game_object.direction != RIGHT:
-                game_object.next_direction = LEFT
-            elif event.key == pygame.K_RIGHT and game_object.direction != LEFT:
-                game_object.next_direction = RIGHT
+            for key in TURNS:
+                if event.key == key[0] and game_object.direction != key[1]:
+                    game_object.next_direction = TURNS[key]
+            return game_object.next_direction
 
 
 def main():
